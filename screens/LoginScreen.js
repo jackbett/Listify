@@ -27,20 +27,7 @@ const LoginScreen = () => {
         </Text>
 
         <View style={{ height: 80 }} />
-        {/* Use the SpotifyAuthButton component here */}
-        <SpotifyAuthButton
-          onLoginSuccess={handleLoginSuccess}
-          style={{
-            padding: 10,
-            marginLeft: "auto",
-            marginRight: "auto",
-            width: 300,
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-            marginVertical: 10,
-          }}
-        />
+        <SpotifyAuthButton onLoginSuccess={handleLoginSuccess} />
 
         {/* Rest of the code */}
       </SafeAreaView>

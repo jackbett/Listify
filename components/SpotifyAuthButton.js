@@ -1,5 +1,6 @@
+// SpotifyAuthButton.js
 import React from 'react';
-import { Button } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 
@@ -10,7 +11,7 @@ const discovery = {
   tokenEndpoint: 'https://accounts.spotify.com/api/token',
 };
 
-const SpotifyAuthButton = ({ onLoginSuccess, style }) => {
+const SpotifyAuthButton = ({ onLoginSuccess }) => {
   const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: 'c7aa783dc6ec4440886b382a9fd31e79',
@@ -30,15 +31,25 @@ const SpotifyAuthButton = ({ onLoginSuccess, style }) => {
   }, [response, onLoginSuccess]);
 
   return (
-    <Button
+    <Pressable
       disabled={!request}
-      title="Login with Spotify"
       onPress={() => {
         promptAsync();
       }}
-      color="#1DB954" // Apply the background color directly to the Button using the color prop
-      style={style} // You can still keep the style prop to add additional styles if needed
-    />
+      style={{
+        backgroundColor: "#1DB954",
+        padding: 10,
+        marginLeft: "auto",
+        marginRight: "auto",
+        width: 300,
+        borderRadius: 25,
+        alignItems: "center",
+        justifyContent: "center",
+        marginVertical: 10,
+      }}
+    >
+      <Text style={{ color: 'white', fontSize: 16 }}>Login with Spotify</Text>
+    </Pressable>
   );
 };
 
