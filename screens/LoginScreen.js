@@ -3,11 +3,12 @@ import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import SpotifyAuthButton from "../components/SpotifyAuthButton"; // Import the new component
+import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
 
 const LoginScreen = () => {
+  const navigation = useNavigation();
   const handleLoginSuccess = (code) => {
-    // Handle the code received from Spotify authentication
-    // For example, you can call your backend server with this code to exchange it for an access token.
+    navigation.navigate('Main'); // 'Home' should be the name of the screen in your AppStack that corresponds to the home page.
   };
 
   return (
