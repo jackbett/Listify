@@ -1,13 +1,13 @@
 import React from 'react';
 import { Text, View, SafeAreaView, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../components/AuthContext'; // Make sure the import path is correct
+// import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../components/AuthContext'; 
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
-  const { handleLogin } = useAuth(); // Use the handleLogin function from your AuthContext
-
+  // const navigation = useNavigation();
+  const  handleLogin  = useAuth(); // Use the handleLogin function from your AuthContext
+  console.log(handleLogin)
   return (
     <LinearGradient colors={['#040306', '#131624']} style={{ flex: 1 }}>
       <SafeAreaView>

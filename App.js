@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { ModalPortal } from "react-native-modals";
 import { PlayerContext } from "./PlayerContext";
 import Navigation from "./StackNavigator";
+import { AuthProvider } from './components/AuthContext'; // Make sure to add this import
 
 const styles = StyleSheet.create({
   container: {
@@ -16,10 +17,12 @@ const styles = StyleSheet.create({
 export default function App() {
   return (
     <>
-      <PlayerContext>
+    <PlayerContext>
+      <AuthProvider>
         <Navigation />
-        <ModalPortal/>
-      </PlayerContext>
+        <ModalPortal />
+      </AuthProvider>
+    </PlayerContext>
     </>
   );
 }
