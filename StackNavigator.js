@@ -77,41 +77,6 @@ function SplashScreen() {
   );
 }
 
-// function HomeScreen() {
-//   const { signOut } = React.useContext(AuthContext);
-
-//   return (
-//     <View>
-//       <Text>Signed in!</Text>
-//       <Button title="Sign out" onPress={signOut} />
-//     </View>
-//   );
-// }
-
-// function SignInScreen() {
-//   const [username, setUsername] = React.useState('');
-//   const [password, setPassword] = React.useState('');
-
-//   const { signIn } = React.useContext(AuthContext);
-
-//   return (
-//     <View>
-//       <TextInput
-//         placeholder="Username"
-//         value={username}
-//         onChangeText={setUsername}
-//       />
-//       <TextInput
-//         placeholder="Password"
-//         value={password}
-//         onChangeText={setPassword}
-//         secureTextEntry
-//       />
-//       <Button title="Sign in" onPress={() => signIn({ username, password })} />
-//     </View>
-//   );
-// }
-
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
@@ -211,9 +176,12 @@ export default function Navigation() {
             />
           ) : (
             // User is signed in
-            <Stack.Screen name="Main" component={BottomTabs} />
-            // <Stack.Screen name="Home" component={HomeScreen} />
+            <>
+             <Stack.Screen name="Main" component={BottomTabs} />
+            <Stack.Screen name="Home" component={HomeScreen} />
 
+            </>
+           
           )}
         </Stack.Navigator>
       </NavigationContainer>
@@ -221,19 +189,3 @@ export default function Navigation() {
   );
 }
 
-// const Stack = createNativeStackNavigator();
-// function Navigation() {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator initialRouteName='SplashScreen'>
-//         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-//         <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
-//         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-
-//         {/* <Stack.Screen name="Info" component={SongInfoScreen} options={{ headerShown: false }} /> */}
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// }
-
-// export default Navigation;

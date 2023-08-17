@@ -1,26 +1,23 @@
-// LoginScreen.js
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
-import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import SpotifyAuthButton from "../components/SpotifyAuthButton"; // Import the new component
-import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+import React from 'react';
+import { Text, View, SafeAreaView, Pressable } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../components/AuthContext'; // Make sure the import path is correct
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const handleLoginSuccess = (code) => {
-    navigation.navigate('Home'); // 'Home' should be the name of the screen in your AppStack that corresponds to the home page.
-  };
+  const { handleLogin } = useAuth(); // Use the handleLogin function from your AuthContext
 
   return (
-    <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
+    <LinearGradient colors={['#040306', '#131624']} style={{ flex: 1 }}>
       <SafeAreaView>
         <View style={{ height: 80 }} />
         <Text
           style={{
-            color: "white",
+            color: 'white',
             fontSize: 40,
-            fontWeight: "bold",
-            textAlign: "center",
+            fontWeight: 'bold',
+            textAlign: 'center',
             marginTop: 40,
           }}
         >
@@ -28,9 +25,22 @@ const LoginScreen = () => {
         </Text>
 
         <View style={{ height: 80 }} />
-        <SpotifyAuthButton onLoginSuccess={handleLoginSuccess} />
-
-        {/* Rest of the code */}
+        <Pressable
+          onPress={handleLogin}
+          style={{
+            backgroundColor: '#1DB954',
+            padding: 10,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            width: 300,
+            borderRadius: 25,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginVertical: 10,
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 16 }}>Login with Spotify</Text>
+        </Pressable>
       </SafeAreaView>
     </LinearGradient>
   );
