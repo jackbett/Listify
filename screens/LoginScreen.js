@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native"; // Import the useNavig
 const LoginScreen = () => {
   const navigation = useNavigation();
   const handleLoginSuccess = (code) => {
-    navigation.navigate('Main'); // 'Home' should be the name of the screen in your AppStack that corresponds to the home page.
+    navigation.navigate('Home'); // 'Home' should be the name of the screen in your AppStack that corresponds to the home page.
   };
 
   return (
