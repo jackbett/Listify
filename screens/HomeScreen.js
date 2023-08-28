@@ -9,21 +9,21 @@ function HomeScreen() {
 
   useEffect(() => {
     const getProfile = async () => {
-        if(!userProfile) {
-            const accessToken = state.accessToken;
-            try {
-            const response = await fetch("https://api.spotify.com/v1/me", {
-                headers: {
-                Authorization: `Bearer ${accessToken}`,
-                },
-            });
-            const data = await response.json();
-            setUserProfile(data);
-            return data;
-            } catch (e) {
-            console.error(e);
-            }
-        };
+      if(!userProfile) {
+        const accessToken = state.accessToken;
+        try {
+          const response = await fetch("https://api.spotify.com/v1/me", {
+            headers: {
+            Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          const data = await response.json();
+          setUserProfile(data);
+          return data;
+        } catch (e) {
+          console.error(e);
+        }
+    };
     }
 
     getProfile();
@@ -41,7 +41,6 @@ function HomeScreen() {
         <Text style={{ color: "white" }}>
           Hello, {userProfile?.display_name}
         </Text>
-        
       </SafeAreaView>
     </LinearGradient>
   );

@@ -46,7 +46,6 @@ const SpotifyAuthButton = ({ onLoginSuccess }) => {
           "",
       });
       const tokenResponseJson = await tokenResponse.json();
-      console.log(tokenResponseJson);
       setAuthStates(
         authCode,
         tokenResponseJson.access_token,

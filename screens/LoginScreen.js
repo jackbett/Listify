@@ -1,10 +1,10 @@
 import { Text, View, SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import SpotifyAuthButton from "../components/SpotifyAuthButton"; // Import the new component
+import SpotifyAuthButton from "../components/SpotifyAuthButton";
 
 const LoginScreen = ({ navigation }) => {
   const handleLoginSuccess = () => {
-    navigation.navigate("Home"); // 'Home' should be the name of the screen in your AppStack that corresponds to the home page.
+    navigation.navigate("Home");
   };
 
   return (
