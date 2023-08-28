@@ -11,9 +11,9 @@ const initialState = {
   redirectUri:
     "exp://jp-f6y.jackabett.listify.exp.direct:80/--/spotify-auth-callback",
   scope: ["user-read-email", "playlist-modify-public"],
-  returnedCode: "",
   authCodeGrantType: "authorization_code",
   contentTypeHeader: "application/x-www-form-urlencoded",
+  returnedCode: "",
   accessToken: "",
   tokenType: "",
   tokenExpiresIn: "",
@@ -24,37 +24,19 @@ const initialState = {
 function AuthProvider({ children }) {
   const [state, setState] = useState(initialState);
 
-  const setReturnedCode = (returnedCode) => {
+  const setAuthStates = (
+    returnedCode,
+    accessToken,
+    tokenType,
+    tokenExpiresIn,
+    refreshToken
+  ) => {
     setState({
       ...state,
       returnedCode: returnedCode,
-    });
-  };
-
-  const setAccessToken = (accessToken) => {
-    setState({
-      ...state,
       accessToken: accessToken,
-    });
-  };
-
-  const setTokenType = (tokenType) => {
-    setState({
-      ...state,
       tokenType: tokenType,
-    });
-  };
-
-  const setTokenExpiresIn = (tokenExpiresIn) => {
-    setState({
-      ...state,
       tokenExpiresIn: tokenExpiresIn,
-    });
-  };
-
-  const setRefreshToken = (refreshToken) => {
-    setState({
-      ...state,
       refreshToken: refreshToken,
     });
   };
@@ -63,11 +45,7 @@ function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         state,
-        setReturnedCode,
-        setAccessToken,
-        setTokenType,
-        setTokenExpiresIn,
-        setRefreshToken
+        setAuthStates,
       }}
     >
       {children}
