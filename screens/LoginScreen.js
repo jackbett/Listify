@@ -1,14 +1,10 @@
-// LoginScreen.js
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
-import React from "react";
+import { Text, View, SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import SpotifyAuthButton from "../components/SpotifyAuthButton"; // Import the new component
-import { useNavigation } from "@react-navigation/native"; // Import the useNavigation hook
+import SpotifyAuthButton from "../components/SpotifyAuthButton";
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
-  const handleLoginSuccess = (code) => {
-    navigation.navigate('Main'); // 'Home' should be the name of the screen in your AppStack that corresponds to the home page.
+const LoginScreen = ({ navigation }) => {
+  const handleLoginSuccess = () => {
+    navigation.navigate("Home");
   };
 
   return (
@@ -29,8 +25,6 @@ const LoginScreen = () => {
 
         <View style={{ height: 80 }} />
         <SpotifyAuthButton onLoginSuccess={handleLoginSuccess} />
-
-        {/* Rest of the code */}
       </SafeAreaView>
     </LinearGradient>
   );

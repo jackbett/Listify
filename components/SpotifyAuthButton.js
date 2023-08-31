@@ -1,59 +1,85 @@
-import React, { useState } from 'react';
-import { Pressable, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
-import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
-import * as WebBrowser from 'expo-web-browser';
+import { useEffect, useContext } from "react";
+import { Pressable, Text } from "react-native";
+import { useAuthRequest } from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
+import { AuthContext } from "../contexts/AuthContext";
+import { encode } from "base-64";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const discovery = {
-  authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-  tokenEndpoint: 'https://accounts.spotify.com/api/token',
-};
-
 const SpotifyAuthButton = ({ onLoginSuccess }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { state, setAuthStates } = useContext(AuthContext);
+
+  const authCodeConfig = {
+    clientId: state.clientId,
+    redirectUri: state.redirectUri,
+    responseType: state.responseType,
+    scopes: state.scope,
+    usePKCE: false,
+  };
+
+  const authCodeDiscovery = {
+    authorizationEndpoint: state.authorizationEndpoint,
+  };
+
   const [request, response, promptAsync] = useAuthRequest(
-    {
-      clientId: 'c7aa783dc6ec4440886b382a9fd31e79',
-      scopes: ['user-read-email', 'playlist-modify-public'],
-      usePKCE: false,
-      redirectUri: "exp://jp-f6y.jackabett.listify.exp.direct:80/--/spotify-auth-callback", // Replace this with your actual redirect URI
-    },
-    discovery
+    authCodeConfig,
+    authCodeDiscovery
   );
 
-  const navigation = useNavigation(); // Access the navigation object
-
-  React.useEffect(() => {
-    if (response?.type === 'success') {
-      const { code } = response.params;
-      // Call the onLoginSuccess function and pass the code
-      onLoginSuccess(code);
-      setIsLoggedIn(true); // Set the login status to true when the user successfully logs in
-      // Close the login web browser and navigate to your home page
-      navigation.navigate('Main'); // Replace 'Main' with the name of your home screen
+  const getAccessToken = async (authCode) => {
+    try {
+      const tokenResponse = await fetch(state.tokenEndpoint, {
+        method: "POST",
+        headers: {
+          Authorization:
+            "Basic " + encode(`${state.clientId + ":" + state.secretId}`),
+          "Content-Type": state.contentTypeHeader,
+        },
+        body:
+          "grant_type=" +
+          state.authCodeGrantType +
+          "&code=" +
+          authCode +
+          "&redirect_uri=" +
+          state.redirectUri +
+          "",
+      });
+      const tokenResponseJson = await tokenResponse.json();
+      setAuthStates(
+        authCode,
+        tokenResponseJson.access_token,
+        tokenResponseJson.token_type,
+        tokenResponseJson.expires_in,
+        tokenResponseJson.refresh_token
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      onLoginSuccess();
     }
-  }, [response, onLoginSuccess, navigation]);
+  };
 
-  React.useEffect(() => {
-    // Check if the response contains an expired token
-    if (response?.type === 'error' && response.error === 'invalid_grant') {
-      // Handle the expired token here (e.g., prompt the user to log in again)
-      console.log('Token has expired. Please log in again.');
-      setIsLoggedIn(false); // Set the login status to false when the token has expired
+  useEffect(() => {
+    if (response?.type === "success") {
+      const authorizationCode = response.params.code;
+      getAccessToken(authorizationCode);
+    } else if (
+      response?.type === "error" &&
+      response.error === "invalid_grant"
+    ) {
+      console.log("Token has expired. Please log in again.");
     }
   }, [response]);
 
   const handleLogin = () => {
-    // When the button is pressed, prompt the user to log in
     promptAsync();
   };
 
   return (
     <Pressable
-      disabled={!request || isLoggedIn} // Disable the button when already logged in
-      onPress={handleLogin} // Use the handleLogin function to prompt the user to log in
+      disabled={!request}
+      onPress={handleLogin}
       style={{
         backgroundColor: "#1DB954",
         padding: 10,
@@ -66,7 +92,7 @@ const SpotifyAuthButton = ({ onLoginSuccess }) => {
         marginVertical: 10,
       }}
     >
-      <Text style={{ color: 'white', fontSize: 16 }}>Login with Spotify</Text>
+      <Text style={{ color: "white", fontSize: 16 }}>Login with Spotify</Text>
     </Pressable>
   );
 };
