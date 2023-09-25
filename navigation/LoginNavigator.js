@@ -24,9 +24,9 @@ function LoginNavigation() {
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <Ionicons name="person" size={24} color="white" />
+              <Ionicons name="person-circle" size={24} color="white" />
             ) : (
-              <Ionicons name="person-outline" size={24} color="white" />
+              <Ionicons name="person-circle-outline" size={24} color="white" />
             ),
         }}
       />
@@ -39,9 +39,9 @@ function LoginNavigation() {
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <Ionicons name="help" size={24} color="white" />
+              <Ionicons name="help-circle" size={24} color="white" />
             ) : (
-              <Ionicons name="help-outline" size={24} color="white" />
+              <Ionicons name="help-circle-outline" size={24} color="white" />
             ),
         }}
       />
