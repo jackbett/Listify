@@ -1,12 +1,9 @@
+import React from "react";
 import { Text, View, SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import SpotifyAuthButton from "../components/SpotifyAuthButton";
 
-const LoginScreen = ({ navigation }) => {
-  const handleLoginSuccess = () => {
-    navigation.navigate("Home");
-  };
-
+function LoginScreen({ navigation }) {
   return (
     <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
       <SafeAreaView>
@@ -24,10 +21,10 @@ const LoginScreen = ({ navigation }) => {
         </Text>
 
         <View style={{ height: 80 }} />
-        <SpotifyAuthButton onLoginSuccess={handleLoginSuccess} />
+        <SpotifyAuthButton onLoginSuccess={() => navigation.navigate("Home")} />
       </SafeAreaView>
     </LinearGradient>
   );
-};
+}
 
 export default LoginScreen;

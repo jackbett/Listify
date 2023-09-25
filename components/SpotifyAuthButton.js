@@ -1,9 +1,9 @@
-import { useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { Pressable, Text } from "react-native";
 import { useAuthRequest } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import { AuthContext } from "../contexts/AuthContext";
 import { encode } from "base-64";
+import { AuthContext } from "../contexts/AuthContext";
 
 WebBrowser.maybeCompleteAuthSession();
 

@@ -1,13 +1,13 @@
-import { PlayerContext } from "./PlayerContext";
-import Navigation from "./StackNavigator";
+import React from "react";
 import { AuthProvider } from "./contexts/AuthContext";
+import AppNavigation from "./navigation/AppNavigator";
 
-export default function App() {
+function App() {
   return (
-      <AuthProvider>
-        <PlayerContext>
-            <Navigation/>
-        </PlayerContext>
-      </AuthProvider>
+    <AuthProvider>
+      <AppNavigation />
+    </AuthProvider>
   );
 }
+
+export default App;

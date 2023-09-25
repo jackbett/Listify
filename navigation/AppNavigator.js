@@ -1,17 +1,18 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import LoginScreen from "./screens/LoginScreen";
-import HomeScreen from "./screens/HomeScreen";
+import LoginNavigation from "./LoginNavigator";
+import HomeNavigation from "./HomeNavigator";
 
 const Stack = createNativeStackNavigator();
 
-function Navigation() {
+function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen
           name="Login"
-          component={LoginScreen}
+          component={LoginNavigation}
           options={{
             title: "Listify - Login",
             headerShown: false,
@@ -19,15 +20,15 @@ function Navigation() {
         />
         <Stack.Screen
           name="Home"
-          component={HomeScreen}
+          component={HomeNavigation}
           options={{
-            title: "Listify - Home", 
-            headerShown: false 
-        }}
+            title: "Listify - Home",
+            headerShown: false,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-export default Navigation;
+export default AppNavigation;

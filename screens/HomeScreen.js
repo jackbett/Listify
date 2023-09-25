@@ -1,5 +1,5 @@
-import { useContext, useState, useEffect } from "react";
-import { SafeAreaView, Text } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import { Text } from "react-native";
 import { AuthContext } from "../contexts/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -9,12 +9,12 @@ function HomeScreen() {
 
   useEffect(() => {
     const getProfile = async () => {
-      if(!userProfile) {
+      if (!userProfile) {
         const accessToken = state.accessToken;
         try {
           const response = await fetch("https://api.spotify.com/v1/me", {
             headers: {
-            Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           });
           const data = await response.json();
@@ -23,25 +23,18 @@ function HomeScreen() {
         } catch (e) {
           console.error(e);
         }
+      }
     };
-    }
 
     getProfile();
-  });
+  }, []);
 
   return (
-    <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
-      <SafeAreaView
-        style={{
-          flex: 2,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={{ color: "white" }}>
-          Hello, {userProfile?.display_name}
-        </Text>
-      </SafeAreaView>
+    <LinearGradient
+      colors={["#040306", "#131624"]}
+      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+    >
+      <Text style={{ color: "white" }}>Hello, {userProfile?.display_name}</Text>
     </LinearGradient>
   );
 }
