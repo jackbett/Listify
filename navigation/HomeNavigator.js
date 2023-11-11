@@ -2,6 +2,8 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import SearchScreen from "../screens/SearchScreen";
+
 import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
@@ -27,6 +29,21 @@ function HomeNavigation() {
               <Ionicons name="home" size={24} color="white" />
             ) : (
               <Ionicons name="home-outline" size={24} color="white" />
+            ),
+        }}
+      />
+      <Tab.Screen
+        name="SearchTab"
+        component={SearchScreen}
+        options={{
+          title: "Search",
+          headerShown: false,
+          tabBarLabelStyle: { color: "white" },
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <Ionicons name="search" size={24} color="white" />
+            ) : (
+              <Ionicons name="search-outline" size={24} color="white" />
             ),
         }}
       />
