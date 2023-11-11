@@ -1,12 +1,27 @@
-import React from "react";
+// LoginNavigation.js
+
+import React, { useEffect, useContext } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import LoginScreen from "../screens/LoginScreen";
 import AboutScreen from "../screens/AboutScreen";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation
+import { AuthContext } from "../contexts/AuthContext";
 
 const Tab = createBottomTabNavigator();
 
 function LoginNavigation() {
+  const { state } = useContext(AuthContext);
+  const navigation = useNavigation(); // Use useNavigation hook to get the navigation prop
+
+  useEffect(() => {
+    // Check for the access token on component mount
+    if (state.accessToken) {
+      // If access token exists, navigate to the home screen
+      navigation.navigate("Home");
+    }
+  }, [state.accessToken, navigation]); // useEffect will run when state.accessToken or navigation changes
+
   return (
     <Tab.Navigator
       screenOptions={{
