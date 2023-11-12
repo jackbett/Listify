@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useRef } from "react";
 import { Pressable, Text } from "react-native";
 import { useAuthRequest } from "expo-auth-session";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../api/AuthService";
 
 const SpotifyAuthButton = () => {
   const { state, getAccessToken } = useContext(AuthContext);

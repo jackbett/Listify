@@ -1,6 +1,6 @@
 // App.js
 import React from "react";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider } from "./api/AuthService";
 import AppNavigation from "./navigation/AppNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 

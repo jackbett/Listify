@@ -89,10 +89,14 @@ function AuthProvider({ children }) {
       const tokenResponse = await fetch(state.tokenEndpoint, {
         method: "POST",
         headers: {
+          'Cache-Control': 'no-cache',
+          'cache':'no-store',
+          'Pragma': 'no-cache',
+          'Expires': 0,
           Authorization: "Basic " + encode(`${state.clientId}:${state.secretId}`),
           "Content-Type": state.contentTypeHeader,
         },
-        body: `grant_type=${state.authCodeGrantType}&code=${authCode}&redirect_uri=${state.redirectUri}`,
+        body: `show-dialog=true&grant_type=${state.authCodeGrantType}&code=${authCode}&redirect_uri=${state.redirectUri}`,
       });
   
       const tokenResponseJson = await tokenResponse.json();
@@ -168,22 +172,8 @@ function AuthProvider({ children }) {
   };
 
   const signOut = async () => {
+     
     try {
-      // Revoke the Spotify refresh token
-      const tokenResponse = await fetch(TOKEN_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': CONTENT_TYPE_HEADER,
-          Authorization: `Basic ${encode(`${CLIENT_ID}:${SECRET_ID}`)}`,
-        },
-        body: new URLSearchParams({
-          token: state.refreshToken,
-          token_type_hint: 'refresh_token',
-        }),
-      });
-  
-      const tokenResponseJson = await tokenResponse.json();
-      console.log(tokenResponse)
 
       // Clear the authentication state and remove tokens from storage
       await SecureStore.deleteItemAsync('authState');
@@ -199,6 +189,7 @@ function AuthProvider({ children }) {
       throw error;
     }
   };
+  
 
   return (
     <AuthContext.Provider

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { View, TextInput, Text, Keyboard, TouchableWithoutFeedback, FlatList, Image, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../api/AuthService";
 
 const SpotifySearchScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,7 +39,7 @@ const SpotifySearchScreen = () => {
         const data = await response.json();
 
         setSearchResults((prevResults) => (loadMore ? [...prevResults, ...data.tracks.items] : data.tracks.items));
-        offsetRef.current += 20;
+        offsetRef.current += 50;
       } else {
         console.error("Error fetching search results:", response.status);
       }

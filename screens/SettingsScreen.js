@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Text, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../api/AuthService";
 
 function SettingsScreen() {
   const { signOut } = useContext(AuthContext);
