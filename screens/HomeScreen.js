@@ -17,12 +17,6 @@ const HomeScreen = () => {
     return (
       <View
         style={{
-          // backgroundColor: 'blue',
-          alignItems: 'center',
-          justifyContent: 'center',
-          // borderRadius: 50,
-          width: 50,
-          height: 50,
         }}>
         <Text style={{ color: 'white', fontSize: 50 }}>{initials}</Text>
       </View>
@@ -66,16 +60,19 @@ const HomeScreen = () => {
         </View>
 
         {/* Right section for profile image */}
-        <View style={{  backgroundColor: "#1ED760",  borderRadius: 50, padding: 10,}}>
+        <View style={{  backgroundColor: "#1ED760",  borderRadius: 50, 
+        alignItems: 'center', justifyContent: 'center', overflow: "hidden", width: 75,
+        height: 75,
+      }}>
           {userProfile && userProfile.images && userProfile.images.length > 0 ? (
             <Image
               source={{ uri: userProfile.images[0].url }}
-              style={{ }}
-            />
+              style={{ width: '100%', height: '100%', borderRadius: 50 }}
+              resizeMode="cover"
+              />
           ) : (           
             <InitialIcon initials={userProfile?.display_name ? userProfile.display_name[0].toUpperCase() 
               : <Ionicons name="person-outline" size={50} color="white" />} />
-            //<Ionicons name="person-outline" size={50} color="black" />
           )}
         </View>
       </View>
