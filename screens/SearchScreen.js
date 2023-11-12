@@ -7,33 +7,18 @@ const SpotifySearchScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const { state } = useContext(AuthContext);
-  const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
-  const flatListRef = useRef(null);
-  const searchTimeout = useRef(null);
+  const offsetRef = useRef(0);
 
   useEffect(() => {
     // Cleanup function to cancel the previous search request
     return () => {
-      clearTimeout(searchTimeout.current);
+      setLoading(false);
     };
   }, []);
 
-  useEffect(() => {
-    // Trigger search after a delay to wait for user input
-    const delayedSearch = setTimeout(() => {
-      handleSearch();
-    }, 300);
-
-    // Cleanup function to cancel the previous search request
-    return () => {
-      clearTimeout(delayedSearch);
-    };
-  }, [searchQuery]);
-
-  const handleSearch = async () => {
-    if (!state.accessToken) {
-      console.log("Access token is not available");
+  const handleSearch = async (loadMore = false) => {
+    if (!state.accessToken || loading) {
       return;
     }
 
@@ -41,7 +26,7 @@ const SpotifySearchScreen = () => {
 
     try {
       const response = await fetch(
-        `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchQuery)}&type=track&offset=${offset}`,
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchQuery)}&type=track&offset=${loadMore ? offsetRef.current : 0}`,
         {
           method: "GET",
           headers: {
@@ -52,12 +37,11 @@ const SpotifySearchScreen = () => {
 
       if (response.ok) {
         const data = await response.json();
-        
-        // Only clear results if it's a new search
-        setSearchResults(data.tracks.items);
-        setOffset(offset + 20);
+
+        setSearchResults((prevResults) => (loadMore ? [...prevResults, ...data.tracks.items] : data.tracks.items));
+        offsetRef.current += 20;
       } else {
-        console.error("Error fetching search results:", response.statusText);
+        console.error("Error fetching search results:", response.status);
       }
     } catch (error) {
       console.error("Error fetching search results:", error.message);
@@ -67,11 +51,15 @@ const SpotifySearchScreen = () => {
   };
 
   const handleEndReached = () => {
-    handleSearch();
+    handleSearch(true);
   };
 
   const handleChangeText = (text) => {
     setSearchQuery(text);
+  };
+
+  const handleSubmitEditing = () => {
+    handleSearch();
   };
 
   const renderResultItem = ({ item }) => (
@@ -103,6 +91,7 @@ const SpotifySearchScreen = () => {
             placeholder="What do you want to listen to?"
             placeholderTextColor="gray"
             onChangeText={handleChangeText}
+            onSubmitEditing={handleSubmitEditing}
             value={searchQuery}
             returnKeyType="search"
           />
@@ -111,7 +100,6 @@ const SpotifySearchScreen = () => {
 
       {searchResults.length > 0 && (
         <FlatList
-          ref={flatListRef}
           data={searchResults}
           keyExtractor={(item) => item.id}
           renderItem={renderResultItem}
@@ -121,7 +109,7 @@ const SpotifySearchScreen = () => {
         />
       )}
 
-      {loading && <Text>Loading...</Text>}
+      {/* {loading && <Text>Loading...</Text>} maybe add loading icon */}
     </LinearGradient>
   );
 };
