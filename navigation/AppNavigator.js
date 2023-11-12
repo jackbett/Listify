@@ -32,6 +32,7 @@ const AppNavigation = () => {
           }
         } else {
           console.log('noAccessToken');
+          setInitialRoute("Login");
         }
       } catch (error) {
         console.error('Error checking token validity:', error);

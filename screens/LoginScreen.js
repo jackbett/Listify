@@ -21,7 +21,7 @@ function LoginScreen({ navigation }) {
         </Text>
 
         <View style={{ height: 80 }} />
-        <SpotifyAuthButton onLoginSuccess={() => navigation.navigate("Home")} />
+        <SpotifyAuthButton/>
       </SafeAreaView>
     </LinearGradient>
   );

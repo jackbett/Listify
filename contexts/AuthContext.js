@@ -1,8 +1,10 @@
 // AuthProvider.js
+import * as WebBrowser from 'expo-web-browser';
 
 import React, { createContext, useState, useEffect } from "react";
 import * as SecureStore from 'expo-secure-store';
 import { encode } from 'base-64';
+import { useNavigation } from '@react-navigation/native';
 
 const AuthContext = createContext();
 
@@ -39,6 +41,7 @@ const initialState = {
 
 function AuthProvider({ children }) {
   const [state, setState] = useState(initialState);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const loadAuthState = async () => {
@@ -79,10 +82,41 @@ function AuthProvider({ children }) {
     }
   };
 
+  const getAccessToken = async (authCode, onLoginSuccess) => {
+    WebBrowser.maybeCompleteAuthSession();
+
+    try {
+      const tokenResponse = await fetch(state.tokenEndpoint, {
+        method: "POST",
+        headers: {
+          Authorization: "Basic " + encode(`${state.clientId}:${state.secretId}`),
+          "Content-Type": state.contentTypeHeader,
+        },
+        body: `grant_type=${state.authCodeGrantType}&code=${authCode}&redirect_uri=${state.redirectUri}`,
+      });
+  
+      const tokenResponseJson = await tokenResponse.json();
+      setAuthStates(
+        authCode,
+        tokenResponseJson.access_token,
+        tokenResponseJson.token_type,
+        tokenResponseJson.expires_in,
+        tokenResponseJson.refresh_token
+      );
+      navigation.navigate('Home', {
+        animation: 'slide_from_right', // Custom parameter for animation direction
+      });
+      // Trigger the callback
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const validateToken = async () => {
     try {
-      console.log(VALIDATE_ENDPOINT);
-
       const response = await fetch(VALIDATE_ENDPOINT, {
         headers: {
           Authorization: `Bearer ${state.accessToken}`,
@@ -112,7 +146,6 @@ function AuthProvider({ children }) {
       });
 
       const responseData = await response.json();
-      console.log('Token refresh response:', response.status, responseData);
 
       if (!response.ok) {
         throw new Error('Token refresh failed');
@@ -137,7 +170,7 @@ function AuthProvider({ children }) {
   const signOut = async () => {
     try {
       // Revoke the Spotify refresh token
-      await fetch(TOKEN_ENDPOINT, {
+      const tokenResponse = await fetch(TOKEN_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': CONTENT_TYPE_HEADER,
@@ -148,11 +181,19 @@ function AuthProvider({ children }) {
           token_type_hint: 'refresh_token',
         }),
       });
+  
+      const tokenResponseJson = await tokenResponse.json();
+      console.log(tokenResponse)
 
       // Clear the authentication state and remove tokens from storage
-      const updatedState = { ...initialState };
       await SecureStore.deleteItemAsync('authState');
-      setState(updatedState);
+      
+      // Set the authentication state back to the initial state
+      setState(initialState);
+  
+      navigation.navigate('Login', {
+        animation: 'slide_from_left',
+      });
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;
@@ -167,6 +208,7 @@ function AuthProvider({ children }) {
         validateToken,
         refreshToken,
         signOut,
+        getAccessToken,
       }}
     >
       {children}

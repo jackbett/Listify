@@ -6,12 +6,11 @@ import { NavigationContainer } from "@react-navigation/native";
 
 function App() {
   return (
+  <NavigationContainer>
     <AuthProvider>
-      <NavigationContainer>
-          <AppNavigation />
-      </NavigationContainer>
+      <AppNavigation />
     </AuthProvider>
-
+  </NavigationContainer>
   );
 }
 

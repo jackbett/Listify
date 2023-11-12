@@ -1,14 +1,11 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useRef } from "react";
 import { Pressable, Text } from "react-native";
 import { useAuthRequest } from "expo-auth-session";
-import * as WebBrowser from "expo-web-browser";
-import { encode } from "base-64";
 import { AuthContext } from "../contexts/AuthContext";
 
-WebBrowser.maybeCompleteAuthSession();
-
-const SpotifyAuthButton = ({ onLoginSuccess }) => {
-  const { state, setAuthStates } = useContext(AuthContext);
+const SpotifyAuthButton = () => {
+  const { state, getAccessToken } = useContext(AuthContext);
+  const hasHandledAuthResponse = useRef(false);
 
   const authCodeConfig = {
     clientId: state.clientId,
@@ -27,52 +24,23 @@ const SpotifyAuthButton = ({ onLoginSuccess }) => {
     authCodeDiscovery
   );
 
-  const getAccessToken = async (authCode) => {
-    try {
-      const tokenResponse = await fetch(state.tokenEndpoint, {
-        method: "POST",
-        headers: {
-          Authorization:
-            "Basic " + encode(`${state.clientId + ":" + state.secretId}`),
-          "Content-Type": state.contentTypeHeader,
-        },
-        body:
-          "grant_type=" +
-          state.authCodeGrantType +
-          "&code=" +
-          authCode +
-          "&redirect_uri=" +
-          state.redirectUri +
-          "",
-      });
-      const tokenResponseJson = await tokenResponse.json();
-      setAuthStates(
-        authCode,
-        tokenResponseJson.access_token,
-        tokenResponseJson.token_type,
-        tokenResponseJson.expires_in,
-        tokenResponseJson.refresh_token
-      );
-    } catch (e) {
-      console.error(e);
-    } finally {
-      onLoginSuccess();
-    }
-  };
-
   useEffect(() => {
-    if (response?.type === "success") {
-      const authorizationCode = response.params.code;
-      getAccessToken(authorizationCode);
-    } else if (
-      response?.type === "error" &&
-      response.error === "invalid_grant"
-    ) {
-      console.log("Token has expired. Please log in again.");
-    }
-  }, [response]);
+    const handleAuthResponse = async () => {
+      if (response?.type === "success" && !hasHandledAuthResponse.current) {
+        console.log("Authentication successful. Retrieving access token...");
+        const authorizationCode = response.params.code;
+        getAccessToken(authorizationCode);
+        hasHandledAuthResponse.current = true;
+      } else if (response?.type === "error" && response.error === "invalid_grant") {
+        console.log("Token has expired. Please log in again.");
+      }
+    };
+
+    handleAuthResponse();
+  }, [response, getAccessToken]);
 
   const handleLogin = () => {
+    console.log("Login button pressed. Initiating authentication...");
     promptAsync();
   };
 
