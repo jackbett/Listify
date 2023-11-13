@@ -9,6 +9,9 @@ const SpotifySearchScreen = () => {
   const { state } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const offsetRef = useRef(0);
+  const screenHeight = Dimensions.get("window").height;
+
+  const topPadding = screenHeight * 0.08;
 
   useEffect(() => {
     // Cleanup function to cancel the previous search request
@@ -18,7 +21,7 @@ const SpotifySearchScreen = () => {
   }, []);
 
   const handleSearch = async (loadMore = false) => {
-    if (!state.accessToken || loading) {
+    if (!state.accessToken || loading || searchQuery.trim() === "") {
       return;
     }
 
@@ -59,6 +62,8 @@ const SpotifySearchScreen = () => {
   };
 
   const handleSubmitEditing = () => {
+    setSearchResults([]);
+    offsetRef.current = 0;
     handleSearch();
   };
 
@@ -80,36 +85,44 @@ const SpotifySearchScreen = () => {
   );
 
   return (
-    <LinearGradient
-      colors={["#040306", "#131624"]}
-      style={{ flex: 1, alignItems: "center", justifyContent: "top" }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ width: "80%", marginTop: 80, marginBottom: 20 }}>
-          <TextInput
-            style={{ height: 40, borderColor: "gray", borderWidth: 1, color: "white", padding: 10 }}
-            placeholder="What do you want to listen to?"
-            placeholderTextColor="gray"
-            onChangeText={handleChangeText}
-            onSubmitEditing={handleSubmitEditing}
-            value={searchQuery}
-            returnKeyType="search"
-          />
+    <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
+      <View style={{ padding: 5, paddingTop: topPadding, alignItems: "center", backgroundColor: "#151515" }}>
+        <View style={{ flexDirection: "row", paddingHorizontal: 5, paddingVertical: 10, alignItems: "center", width: "100%" }}>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "#1DB954", fontSize: 20, fontFamily: "AvenirNext-Bold" }}>
+              A song you like with a color in the title
+            </Text>
+          </View>
         </View>
-      </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ width: "80%", marginTop: 20, marginBottom: 20 }}>
+            <TextInput
+              style={{ height: 40, borderColor: "gray", borderWidth: 1, color: "white", padding: 10 }}
+              placeholder="What do you want to listen to?"
+              placeholderTextColor="gray"
+              onChangeText={handleChangeText}
+              onSubmitEditing={handleSubmitEditing}
+              value={searchQuery}
+              returnKeyType="search"
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
 
-      {searchResults.length > 0 && (
-        <FlatList
-          data={searchResults}
-          keyExtractor={(item) => item.id}
-          renderItem={renderResultItem}
-          style={{ marginTop: 20, width: "100%" }}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.1}
-        />
-      )}
+      <View style={{ flex: 1 }}>
+        {searchResults.length > 0 && (
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item.id}
+            renderItem={renderResultItem}
+            style={{ marginTop: 20, width: "100%" }}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.1}
+          />
+        )}
 
-      {/* {loading && <Text>Loading...</Text>} maybe add loading icon */}
+        {/* {loading && <Text>Loading...</Text>} maybe add loading icon */}
+      </View>
     </LinearGradient>
   );
 };

@@ -6,15 +6,13 @@ import { AuthContext } from "../api/AuthService";
 import Marquee from "react-native-marquee";
 import { SpotifyApi } from "../api/SpotifyApi";  // Make sure this path is correct
 import { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks, useUserPlaylists } from "../api/SpotifyApi";
-
-
+import LoadingScreen from "../screens/LoadingScreen";
 
 const HomeScreen = () => {
   const { state } = useContext(AuthContext);
   const accessToken = state.accessToken;
 
-  // const [userProfile, setUserProfile] = useState(null);
-  // const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const screenHeight = Dimensions.get("window").height;
@@ -30,15 +28,15 @@ const HomeScreen = () => {
   const { topArtists, updateTopArtists } = useTopArtists(accessToken);
   const { topTracks, updateTopTracks } = useTopTracks(accessToken);
   const { userPlaylists, updateUserPlaylists } = useUserPlaylists(accessToken);
+
   const fetchData = async () => {
     try {
-
       await updateCurrentlyPlaying();
       await updateTopArtists();
       await updateUserProfile();
       await updateTopTracks();
       await updateUserPlaylists();
-
+      setDataLoaded(true); // Set dataLoaded to true when all data is fetched
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -53,16 +51,18 @@ const HomeScreen = () => {
     setRefreshing(true);
 
     try {
-      console.log("Test")
-      // Fetch updated user profile and currently playing
-      // await updateUserProfile();
-      await updateCurrentlyPlaying(); //only thing so far we need to update
+      await updateCurrentlyPlaying();
     } catch (error) {
       console.error("Error refreshing data:", error);
     } finally {
       setRefreshing(false);
     }
   };
+
+  // Loading screen until data is loaded
+  if (!dataLoaded) {
+    return <LoadingScreen />;
+  }
 
   return (
     <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
@@ -73,7 +73,11 @@ const HomeScreen = () => {
               <Ionicons name={"settings"} size={24} color="white" />
             </TouchableOpacity>
           </View>
-          <View style={{ flex: 1 }}></View>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "#1DB954", fontSize: 20, fontFamily: "AvenirNext-Bold" }}>
+              A song you like with a color in the title
+            </Text>
+          </View>
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -112,11 +116,11 @@ const HomeScreen = () => {
           </View>
         </View>
 
-        <View style={{ alignItems: "center", padding: 10 }}>
+        {/* <View style={{ alignItems: "center", padding: 10 }}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold" }}>
             A song you like with a color in the title
           </Text>
-        </View>
+        </View> */}
       </View>
 
       <ScrollView
