@@ -46,8 +46,9 @@ const HomeScreen = () => {
     setRefreshing(true);
 
     try {
+      console.log("Test")
       // Fetch updated user profile and currently playing
-      await updateUserProfile();
+      // await updateUserProfile();
       await updateCurrentlyPlaying();
     } catch (error) {
       console.error("Error refreshing data:", error);
@@ -115,8 +116,8 @@ const HomeScreen = () => {
       <ScrollView
         style={{ flex: 1, backgroundColor: "transparent" }}
         contentContainerStyle={{ flexGrow: 1 }}
-        refreshControl={<RefreshControl tintColor="#FFFFFF" />}
-        //        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#FFFFFF" />}
+        // refreshControl={<RefreshControl tintColor="#FFFFFF" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#FFFFFF" />}
 
       >
         {currentlyPlaying && currentlyPlaying.item ? (
