@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, Text, View, Image, Dimensions, TouchableOpacity, RefreshControl,FlatList } from "react-native";
+import { ScrollView, Text, View, Image, Dimensions, TouchableOpacity, RefreshControl, FlatList } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../api/AuthService";
 import Marquee from "react-native-marquee";
 import { SpotifyApi } from "../api/SpotifyApi";  // Make sure this path is correct
-import { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks} from "../api/SpotifyApi";
+import { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks, useUserPlaylists } from "../api/SpotifyApi";
 
 
 
@@ -29,14 +29,16 @@ const HomeScreen = () => {
   const { currentlyPlaying, updateCurrentlyPlaying } = useCurrentlyPlaying(accessToken);
   const { topArtists, updateTopArtists } = useTopArtists(accessToken);
   const { topTracks, updateTopTracks } = useTopTracks(accessToken);
-
+  const { userPlaylists, updateUserPlaylists } = useUserPlaylists(accessToken);
   const fetchData = async () => {
-    try {      
-      
+    try {
+
       await updateCurrentlyPlaying();
       await updateTopArtists();
       await updateUserProfile();
       await updateTopTracks();
+      await updateUserPlaylists();
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -62,29 +64,6 @@ const HomeScreen = () => {
     }
   };
 
-  // const renderTopItem = ({ item, index, isTrack = false }) => (
-  //   <View style={{ alignItems: "center", marginRight: 10 }}>
-  //     <View style={{ backgroundColor: "#1ED760", borderRadius: 50, overflow: "hidden", width: 80, height: 80 }}>
-  //       <Image
-  //         source={{ uri: isTrack ? item.album.images[0].url : item.images[0].url }}
-  //         style={{ width: "100%", height: "100%", borderRadius: 50 }}
-  //         resizeMode="cover"
-  //       />
-  //     </View>
-  //     <Text style={{ color: "white", fontSize: 16, fontFamily: "AvenirNext-Medium", marginTop: 5 }}>
-  //       {index + 1}. {isTrack ? item.name : item.name}
-  //     </Text>
-  //     {isTrack && (
-  //       <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 14, fontFamily: "AvenirNext-Medium", marginTop: 2 }}>
-  //         {item.artists.map(artist => artist.name).join(', ')}
-  //       </Text>
-  //     )}
-  //   </View>
-  // );
-
-  
-
-
   return (
     <LinearGradient colors={["#040306", "#131624"]} style={{ flex: 1 }}>
       <View style={{ padding: 5, paddingTop: topPadding, backgroundColor: "#151515" }}>
@@ -101,12 +80,12 @@ const HomeScreen = () => {
           <View style={{ flexDirection: "row", alignItems: "center", padding: 5 }}>
             <View style={{ flex: 1, alignItems: "flex-start", width: "50%", padding: 0 }}>
               <View>
-              <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 24, fontFamily: "AvenirNext-Bold" }}>
-                Hello {userProfile ? userProfile.display_name : ''}!
-              </Text>
-              <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 16, fontFamily: "AvenirNext-Medium" }}>
-                @{userProfile ? userProfile.id : ''}
-              </Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 24, fontFamily: "AvenirNext-Bold" }}>
+                  Hello {userProfile ? userProfile.display_name : ''}!
+                </Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 16, fontFamily: "AvenirNext-Medium" }}>
+                  @{userProfile ? userProfile.id : ''}
+                </Text>
               </View>
             </View>
             <View
@@ -145,7 +124,7 @@ const HomeScreen = () => {
         contentContainerStyle={{ flexGrow: 1 }}
         // refreshControl={<RefreshControl tintColor="#FFFFFF" />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#FFFFFF" />}
-        >
+      >
         {currentlyPlaying && currentlyPlaying.item ? (
           <View style={{ padding: 10, alignItems: "flex-start", width: "75%" }}>
             <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
@@ -173,47 +152,117 @@ const HomeScreen = () => {
           <Text style={{ color: "white" }}>No track is currently playing</Text>
         )}
 
-<View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
-  <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
-    Top Artists
-  </Text>
-  <FlatList
-    horizontal
-    data={topArtists}
-    keyExtractor={(item, index) => index.toString()}
-    renderItem={({ item, index }) => (
-      <View key={index} style={{ width: 80, alignItems: "center", marginRight: 15 }}>
-        <Image source={{ uri: item.images[0].url }} style={{ width: 80, height: 80, borderRadius: 50, marginBottom: 5 }} />
-        <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 12, fontFamily: "AvenirNext-Bold", textAlign: "center" }}>
-          {`${index + 1}. ${item.name}`}
-        </Text>
-      </View>
-    )}
-  />
-</View>
+        <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
+          <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
+            Top Artists
+          </Text>
+          <FlatList
+            horizontal
+            data={topArtists}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View key={index} style={{ width: 80, alignItems: "center", marginRight: 15 }}>
 
-<View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
-  <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
-    Top Tracks
-  </Text>
-  <FlatList
-    horizontal
-    data={topTracks}
-    keyExtractor={(item, index) => index.toString()}
-    renderItem={({ item, index }) => (
-      <View key={index} style={{ width: 80, alignItems: "center", marginRight: 15 }}>
-        <Image source={{ uri: item.album.images[0].url }} style={{ width: 80, height: 80, borderRadius: 50, marginBottom: 5 }} />
-        <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 12, fontFamily: "AvenirNext-Bold", textAlign: "center" }}>
-          {`${index + 1}. ${item.name}`}
-        </Text>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 10, fontFamily: "AvenirNext-Medium", textAlign: "center" }}>
-          {item.artists.map(artist => artist.name).join(', ')}
-        </Text>
-      </View>
-    )}
-    contentContainerStyle={{ paddingRight: 10 }}
-  />
-</View>
+                <View style={{ width: 80, height: 80, borderRadius: 50, overflow: "hidden", marginBottom: 5 }}>
+                  {item.images && item.images.length > 0 ? (
+                    <Image
+                      source={{ uri: item.images[0].url }}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  ) : (
+                    <LinearGradient
+                      colors={["#8B78E6", "#3DDC97"]}
+                      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                    >
+                      <Ionicons name="person-outline" size={40} color="white" />
+                    </LinearGradient>
+                  )}
+                </View>
+
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 12, fontFamily: "AvenirNext-Bold", textAlign: "center" }}>
+                  {`${index + 1}. ${item.name}`}
+                </Text>
+              </View>
+            )}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingRight: 10 }}
+          />
+        </View>
+
+        <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
+          <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
+            Top Tracks
+          </Text>
+          <FlatList
+            horizontal
+            data={topTracks}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View key={index} style={{ width: 80, alignItems: "center", marginRight: 15 }}>
+
+
+                <View style={{ width: 80, height: 80, borderRadius: 0, overflow: "hidden", marginBottom: 5 }}>
+                  {item.album && item.album.images.length > 0 ? (
+                    <Image
+                      source={{ uri: item.album.images[0].url }}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  ) : (
+                    <LinearGradient
+                      colors={["#8B78E6", "#3DDC97"]}
+                      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                    >
+                      <Ionicons name="musical-notes-outline" size={40} color="white" />
+                    </LinearGradient>
+                  )}
+                </View>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 12, fontFamily: "AvenirNext-Bold", textAlign: "center" }}>
+                  {`${index + 1}. ${item.name}`}
+                </Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 10, fontFamily: "AvenirNext-Medium", textAlign: "center" }}>
+                  {item.artists.map(artist => artist.name).join(', ')}
+                </Text>
+              </View>
+            )}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingRight: 10 }}
+          />
+        </View>
+
+        <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
+          <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
+            Your Playlists
+          </Text>
+          <FlatList
+            horizontal
+            data={userPlaylists}
+            keyExtractor={(item, index) => item.id}
+            renderItem={({ item, index }) => (
+              <View key={index} style={{ width: 80, alignItems: "center", marginRight: 15 }}>
+                <View style={{ width: 80, height: 80, borderRadius: 0, overflow: "hidden", marginBottom: 5 }}>
+                  {item.images && item.images.length > 0 ? (
+                    <Image
+                      source={{ uri: item.images[0].url }}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  ) : (
+                    <LinearGradient
+                      colors={["#8B78E6", "#3DDC97"]}
+                      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                    >
+                      <Ionicons name="play-circle-outline" size={40} color="white" />
+                    </LinearGradient>
+                  )}
+                </View>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: "white", fontSize: 12, fontFamily: "AvenirNext-Bold", textAlign: "center" }}>
+                  {`${index + 1}. ${item.name}`}
+                </Text>
+              </View>
+            )}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingRight: 10 }}
+          />
+        </View>
 
 
       </ScrollView>
