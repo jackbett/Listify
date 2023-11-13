@@ -116,4 +116,37 @@ const useTopTracks = (accessToken, timeRange = 'medium_term') => {
   return { topTracks, updateTopTracks };
 };
 
-export { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks };
+const useUserPlaylists = (accessToken) => {
+  const [userPlaylists, setUserPlaylists] = useState(null);
+
+  const updateUserPlaylists = async () => {
+    try {
+      const limit = 50;
+
+      const response = await fetch(`https://api.spotify.com/v1/me/playlists?limit=${limit}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUserPlaylists(data.items);
+      } else {
+        console.error('Error fetching user playlists:', response.status);
+      }
+    } catch (e) {
+      console.error('Error fetching user playlists:', e.message);
+    }
+  };
+
+  useEffect(() => {
+    updateUserPlaylists();
+  }, [accessToken]);
+
+  return { userPlaylists, updateUserPlaylists };
+};
+
+
+
+export { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks, useUserPlaylists };
