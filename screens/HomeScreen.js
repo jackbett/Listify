@@ -129,32 +129,61 @@ const HomeScreen = () => {
         // refreshControl={<RefreshControl tintColor="#FFFFFF" />}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#FFFFFF" />}
       >
-        {currentlyPlaying && currentlyPlaying.item ? (
-          <View style={{ padding: 10, alignItems: "flex-start", width: "75%" }}>
-            <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
-              Currently Playing
+{currentlyPlaying && currentlyPlaying.item ? (
+  <View style={{ flexDirection: "row", padding: 10, alignItems: "stretch", paddingRight: 10, }}>
+    <View style={{ flex: 1,  }}>
+      <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
+        Currently Playing
+      </Text>
+      <View style={{ flexDirection: "row", alignItems: "center,", paddingRight: 10 }}>
+        <Image source={{ uri: currentlyPlaying.item.album.images[0].url }} style={{ width: 60, height: 60, borderRadius: 10, marginRight: 10 }} />
+        <View style={{ flex: 1, paddingLeft: 10}}>
+          {currentlyPlaying.item.name.length > 20 ? (
+            <Marquee style={{ color: "white", fontSize: 18, fontFamily: "AvenirNext-Bold", marginBottom: 5 }} speed={0.15} delay={2000}>
+              {currentlyPlaying.item.name}
+            </Marquee>
+          ) : (
+            <Text style={{ color: "white", fontSize: 18, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
+              {currentlyPlaying.item.name}
             </Text>
-            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-              <Image source={{ uri: currentlyPlaying.item.album.images[0].url }} style={{ width: 60, height: 60, borderRadius: 10, marginRight: 10 }} />
-              <View style={{ flex: 1 }}>
-                {currentlyPlaying.item.name.length > 20 ? (
-                  <Marquee style={{ color: "white", fontSize: 18, fontFamily: "AvenirNext-Bold", marginBottom: 5 }} speed={0.15} delay={2000}>
-                    {currentlyPlaying.item.name}
-                  </Marquee>
-                ) : (
-                  <Text style={{ color: "white", fontSize: 18, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
-                    {currentlyPlaying.item.name}
-                  </Text>
-                )}
-                <Text numberOfLines={2} ellipsizeMode="tail" style={{ color: "white", fontSize: 16, fontFamily: "AvenirNext-Medium", marginBottom: 5 }}>
-                  {currentlyPlaying.item.artists.map((artist) => artist.name).join(", ")}
-                </Text>
-              </View>
-            </View>
-          </View>
-        ) : (
-          <Text style={{ color: "white" }}>No track is currently playing</Text>
-        )}
+          )}
+          <Text numberOfLines={2} ellipsizeMode="tail" style={{ color: "white", fontSize: 16, fontFamily: "AvenirNext-Medium", marginBottom: 5 }}>
+            {currentlyPlaying.item.artists.map((artist) => artist.name).join(", ")}
+          </Text>
+        </View>
+      </View>
+    </View>
+    
+    
+    <View style={{  }}>
+      <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
+        Popularity
+      </Text>
+      <View style={{ alignItems: "center" }}>
+      <Text style={{ color: "white", fontSize: 40, fontFamily: "AvenirNext-UltraLight", paddingTop:10 }}>
+        {currentlyPlaying.item.popularity}
+      </Text>
+        
+      </View>
+    </View>
+    {/* <View style={{ alignItems: "center", justifyContent: "center", backgroundColor: "blue", alignSelf: "flex-start" }}>
+      <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
+        Popularity
+      </Text>
+      <Text style={{ color: "white", fontSize: 16, fontFamily: "AvenirNext-Medium" }}>
+        {currentlyPlaying.item.popularity}
+      </Text>
+    </View> */}
+  </View>
+) : (
+  null
+)}
+
+
+
+
+
+
 
         <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
           <Text style={{ color: "white", fontSize: 20, fontFamily: "AvenirNext-Bold", marginBottom: 5 }}>
