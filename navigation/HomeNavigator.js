@@ -1,28 +1,57 @@
+// ArtistDetailsScreen remains the same
+
+// HomeScreen remains the same
+
+// HomeNavigation.js
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/HomeScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import SearchScreen from "../screens/SearchScreen";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ArtistDetailsScreen from "../screens/ArtistDetailsScreen"; // Import ArtistDetailsScreen
 
 import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator(); // Create a stack navigator for artist details
 
+// ArtistDetailsStack component for handling the stack of artist details screen
+const ArtistDetailsStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false, // Hide the header for the stack navigator
+      }}
+    >
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+      />
+      <Stack.Screen
+        name="ArtistDetails"
+        component={ArtistDetailsScreen}
+      />
+    </Stack.Navigator>
+  );
+};
+
+// Main tab navigator
 function HomeNavigation() {
   return (
     <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: {
-          backgroundColor: "rgba(0,0,0,0.5)",
-        },
-      }}
-    >
+    screenOptions={{
+      tabBarStyle: {
+        backgroundColor: "rgba(0,0,0,0.5)",
+      },
+      headerShown: false, // Hide headers for all screens in this navigator
+    }}
+  >
       <Tab.Screen
         name="HomeTab"
-        component={HomeScreen}
+        component={ArtistDetailsStack} // Render the ArtistDetailsStack here
         options={{
           title: "Home",
-          headerShown: false,
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
@@ -37,7 +66,6 @@ function HomeNavigation() {
         component={SearchScreen}
         options={{
           title: "Search",
-          headerShown: false,
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (
@@ -52,7 +80,6 @@ function HomeNavigation() {
         component={SettingsScreen}
         options={{
           title: "Settings",
-          headerShown: false,
           tabBarLabelStyle: { color: "white" },
           tabBarIcon: ({ focused }) =>
             focused ? (

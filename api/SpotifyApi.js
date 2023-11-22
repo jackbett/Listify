@@ -148,5 +148,71 @@ const useUserPlaylists = (accessToken) => {
 };
 
 
+const useArtistTopTracks = (accessToken, artistId, limit = 5) => {
+  const [artistTopTracks, setArtistTopTracks] = useState(null);
 
-export { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks, useUserPlaylists };
+  const fetchArtistTopTracks = async () => {
+    try {
+
+      // console.info(artistId)
+      const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}/top-tracks?country=US&limit=${limit}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setArtistTopTracks(data.tracks);
+      } else {
+        console.error('Error fetching artist top tracks:', response.status, JSON.stringify(response));
+      }
+    } catch (error) {
+      console.error('Error fetching artist top tracks:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (artistId) {
+      fetchArtistTopTracks();
+    }
+  }, [accessToken, artistId]);
+
+  return { artistTopTracks, fetchArtistTopTracks };
+};
+
+const useArtistInfo = (accessToken, artistId) => {
+  const [artistInfo, setArtistInfo] = useState(null);
+
+  const fetchArtistInfo = async () => {
+    try {
+      const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setArtistInfo(data);
+      } else {
+        console.error('Error fetching artist info:', response.status, JSON.stringify(response));
+      }
+    } catch (error) {
+      console.error('Error fetching artist info:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken && artistId) {
+      fetchArtistInfo();
+    }
+  }, [accessToken, artistId]);
+
+  return { artistInfo, fetchArtistInfo };
+};
+
+
+export { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks, useUserPlaylists, useArtistTopTracks, useArtistInfo };
