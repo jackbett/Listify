@@ -132,6 +132,7 @@ const ArtistDetailsScreen = ({ route }) => {
   };
 
   const renderAllAlbums = () => {
+    // console.info(artistAlbums)
     if (!dataLoaded || !artistAlbums) {
       return <ActivityIndicator size="small" color="#1DB954" />;
     }

@@ -12,6 +12,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ArtistDetailsScreen from "../screens/ArtistDetailsScreen"; // Import ArtistDetailsScreen
 import TrackDetailScreen from "../screens/TrackDetailScreen"; // Import ArtistDetailsScreen
 import PlaylistDetailScreen from "../screens/PlaylistDetailScreen"; // Import ArtistDetailsScreen
+import AlbumDetailScreen from "../screens/AlbumDetailScreen"; // Import ArtistDetailsScreen
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -30,6 +31,7 @@ const ArtistDetailsStack = () => {
       <Stack.Screen name="ArtistDetails" component={ArtistDetailsScreen} />
       <Stack.Screen name="TrackDetails" component={TrackDetailScreen} />
       <Stack.Screen name="PlaylistDetails" component={PlaylistDetailScreen} />
+      <Stack.Screen name="AlbumDetails" component={AlbumDetailScreen} />
     </Stack.Navigator>
   );
 };

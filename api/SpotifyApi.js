@@ -312,6 +312,44 @@ const usePlaylistSongs = (accessToken, playlistId) => {
   return { playlistSongs, fetchPlaylistSongs };
 };
 
+const useAlbumTracks = (accessToken, albumId) => {
+  const [albumTracks, setAlbumTracks] = useState(null);
+
+  const fetchAlbumTracks = async () => {
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/albums/${albumId}/tracks`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setAlbumTracks(data);
+        console.info(data);
+      } else {
+        console.error(
+          "Error fetching album tracks:",
+          response.status
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching album tracks:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken && albumId) {
+      fetchAlbumTracks();
+    }
+  }, [accessToken, albumId]);
+
+  return { albumTracks, fetchAlbumTracks };
+};
+
 export {
   useUserProfile,
   useCurrentlyPlaying,
@@ -322,4 +360,5 @@ export {
   useArtistInfo,
   useArtistAlbums,
   usePlaylistSongs,
+  useAlbumTracks
 };

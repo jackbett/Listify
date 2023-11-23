@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../api/AuthService";
 
 const SongDetailsScreen = ({ route }) => {
-  const { track } = route.params;
+  const { track, albumImage } = route.params; //we can maybe change this if im doing a call to get song information anyways
   console.log("Song item:", track);
 
   const navigation = useNavigation();
@@ -44,10 +44,18 @@ const SongDetailsScreen = ({ route }) => {
       {/* Song image with overlapping buttons and header */}
       <View style={{ height: imageSize, position: "relative" }}>
         {/* Replace the source with the song image */}
+        {/* todo  if else else for no images avail...*/}
+        {    track.album?.images && track.album.images.length > 0? ( 
+          <Image
+            source={{ uri: track.album.images[0].url }}
+            style={{ width: "100%", height: imageSize, position: "absolute" }}
+          />
+        ):
         <Image
-          source={{ uri: track.album.images[0].url }}
-          style={{ width: "100%", height: imageSize, position: "absolute" }}
-        />
+            source={{ uri: albumImage }}
+            style={{ width: "100%", height: imageSize, position: "absolute" }}
+          />
+        }
         {/* Back icon as a header */}
         <View
           style={{
