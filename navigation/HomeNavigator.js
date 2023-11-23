@@ -11,6 +11,7 @@ import SearchScreen from "../screens/SearchScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ArtistDetailsScreen from "../screens/ArtistDetailsScreen"; // Import ArtistDetailsScreen
 import TrackDetailScreen from "../screens/TrackDetailScreen"; // Import ArtistDetailsScreen
+import PlaylistDetailScreen from "../screens/PlaylistDetailScreen"; // Import ArtistDetailsScreen
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -25,18 +26,10 @@ const ArtistDetailsStack = () => {
         headerShown: false, // Hide the header for the stack navigator
       }}
     >
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-      />
-      <Stack.Screen
-        name="ArtistDetails"
-        component={ArtistDetailsScreen}
-      />
-       <Stack.Screen
-        name="TrackDetails"
-        component={TrackDetailScreen}
-      />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="ArtistDetails" component={ArtistDetailsScreen} />
+      <Stack.Screen name="TrackDetails" component={TrackDetailScreen} />
+      <Stack.Screen name="PlaylistDetails" component={PlaylistDetailScreen} />
     </Stack.Navigator>
   );
 };
@@ -45,13 +38,13 @@ const ArtistDetailsStack = () => {
 function HomeNavigation() {
   return (
     <Tab.Navigator
-    screenOptions={{
-      tabBarStyle: {
-        backgroundColor: "rgba(0,0,0,0.5)",
-      },
-      headerShown: false, // Hide headers for all screens in this navigator
-    }}
-  >
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: "rgba(0,0,0,0.5)",
+        },
+        headerShown: false, // Hide headers for all screens in this navigator
+      }}
+    >
       <Tab.Screen
         name="HomeTab"
         component={ArtistDetailsStack} // Render the ArtistDetailsStack here

@@ -43,6 +43,10 @@ const HomeScreen = () => {
   const { topTracks, updateTopTracks } = useTopTracks(accessToken);
   const { userPlaylists, updateUserPlaylists } = useUserPlaylists(accessToken);
 
+  const InitialIcon = ({ initials }) => (
+    <Text style={{ color: "white", fontSize: 50 }}>{initials}</Text>
+  );
+
   const fetchData = useCallback(async () => {
     try {
       await Promise.all([
@@ -78,93 +82,73 @@ const HomeScreen = () => {
   }
 
   const TopArtistsSection = ({ topArtists, navigation }) => (
-    <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
-      <Text
-        style={{
-          color: "white",
-          fontSize: 20,
-          fontFamily: "AvenirNext-Bold",
-          marginBottom: 5,
-        }}
-      >
-        Top Artists
-      </Text>
-      <FlatList
-        horizontal
-        data={topArtists}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            key={index}
-            style={{ width: 80, alignItems: "center", marginRight: 15 }}
-            onPress={() =>
-              navigation.navigate("ArtistDetails", { artist: item })
-            }
+    <FlatList
+      horizontal
+      data={topArtists}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item, index }) => (
+        <TouchableOpacity
+          key={index}
+          style={{ width: 80, alignItems: "center", marginRight: 15 }}
+          onPress={() => navigation.navigate("ArtistDetails", { artist: item })}
+        >
+          <View
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: 50,
+              overflow: "hidden",
+              marginBottom: 5,
+            }}
           >
-            <View
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 50,
-                overflow: "hidden",
-                marginBottom: 5,
-              }}
-            >
-              {item.images && item.images.length > 0 ? (
-                <Image
-                  source={{ uri: item.images[0].url }}
-                  style={{ width: "100%", height: "100%" }}
-                />
-              ) : (
-                <LinearGradient
-                  colors={["#8B78E6", "#3DDC97"]}
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons name="person-outline" size={40} color="white" />
-                </LinearGradient>
-              )}
-            </View>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                color: "white",
-                fontSize: 12,
-                fontFamily: "AvenirNext-Bold",
-                textAlign: "center",
-              }}
-            >
-              {`${index + 1}. ${item.name}`}
-            </Text>
-          </TouchableOpacity>
-        )}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingRight: 10 }}
-      />
-    </View>
+            {item.images && item.images.length > 0 ? (
+              <Image
+                source={{ uri: item.images[0].url }}
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <LinearGradient
+                colors={["#8B78E6", "#3DDC97"]}
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name="person-outline" size={40} color="white" />
+              </LinearGradient>
+            )}
+          </View>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{
+              color: "white",
+              fontSize: 12,
+              fontFamily: "AvenirNext-Bold",
+              textAlign: "center",
+            }}
+          >
+            {`${index + 1}. ${item.name}`}
+          </Text>
+        </TouchableOpacity>
+      )}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingRight: 10 }}
+    />
   );
 
   const TopTracksSection = ({ topTracks }) => (
-    <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
-      <Text
-        style={{
-          color: "white",
-          fontSize: 20,
-          fontFamily: "AvenirNext-Bold",
-          marginBottom: 5,
-        }}
-      >
-        Top Tracks
-      </Text>
-      <FlatList
-        horizontal
-        data={topTracks}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
+    <FlatList
+      horizontal
+      data={topTracks}
+      keyExtractor={(item, index) => index.toString()}
+      renderItem={({ item, index }) => (
+        <TouchableOpacity
+          key={index}
+          style={{ width: 80, alignItems: "center", marginRight: 15 }}
+          onPress={() => navigation.navigate("TrackDetails", { track: item })}
+        >
           <View
             key={index}
             style={{ width: 80, alignItems: "center", marginRight: 15 }}
@@ -225,83 +209,73 @@ const HomeScreen = () => {
               {item.artists.map((artist) => artist.name).join(", ")}
             </Text>
           </View>
-        )}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingRight: 10 }}
-      />
-    </View>
+        </TouchableOpacity>
+      )}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingRight: 10 }}
+    />
   );
 
   const UserPlaylistsSection = ({ userPlaylists }) => (
-    <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
-      <Text
-        style={{
-          color: "white",
-          fontSize: 20,
-          fontFamily: "AvenirNext-Bold",
-          marginBottom: 5,
-        }}
-      >
-        Your Playlists
-      </Text>
-      <FlatList
-        horizontal
-        data={userPlaylists}
-        keyExtractor={(item, index) => item.id}
-        renderItem={({ item, index }) => (
+    <FlatList
+      horizontal
+      data={userPlaylists}
+      keyExtractor={(item, index) => item.id}
+      renderItem={({ item, index }) => (
+        <TouchableOpacity
+          key={index}
+          style={{ width: 80, alignItems: "center", marginRight: 15 }}
+          onPress={() => navigation.navigate("PlaylistDetails", { playlist: item })}
+        >
+        <View
+          key={index}
+          style={{ width: 80, alignItems: "center", marginRight: 15 }}
+        >
           <View
-            key={index}
-            style={{ width: 80, alignItems: "center", marginRight: 15 }}
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: 0,
+              overflow: "hidden",
+              marginBottom: 5,
+            }}
           >
-            <View
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 0,
-                overflow: "hidden",
-                marginBottom: 5,
-              }}
-            >
-              {item.images && item.images.length > 0 ? (
-                <Image
-                  source={{ uri: item.images[0].url }}
-                  style={{ width: "100%", height: "100%" }}
-                />
-              ) : (
-                <LinearGradient
-                  colors={["#8B78E6", "#3DDC97"]}
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons
-                    name="play-circle-outline"
-                    size={40}
-                    color="white"
-                  />
-                </LinearGradient>
-              )}
-            </View>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                color: "white",
-                fontSize: 12,
-                fontFamily: "AvenirNext-Bold",
-                textAlign: "center",
-              }}
-            >
-              {`${index + 1}. ${item.name}`}
-            </Text>
+            {item.images && item.images.length > 0 ? (
+              <Image
+                source={{ uri: item.images[0].url }}
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <LinearGradient
+                colors={["#8B78E6", "#3DDC97"]}
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name="play-circle-outline" size={40} color="white" />
+              </LinearGradient>
+            )}
           </View>
-        )}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingRight: 10 }}
-      />
-    </View>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{
+              color: "white",
+              fontSize: 12,
+              fontFamily: "AvenirNext-Bold",
+              textAlign: "center",
+            }}
+          >
+            {`${index + 1}. ${item.name}`}
+          </Text>
+        </View>
+        </TouchableOpacity>
+      )}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingRight: 10 }}
+    />
   );
 
   return (
@@ -539,11 +513,49 @@ const HomeScreen = () => {
           </View>
         ) : null}
 
-        <TopArtistsSection topArtists={topArtists} navigation={navigation} />
+        <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
+          <Text
+            style={{
+              color: "white",
+              fontSize: 20,
+              fontFamily: "AvenirNext-Bold",
+              marginBottom: 5,
+            }}
+          >
+            Top Artists
+          </Text>
 
-        <TopTracksSection topTracks={topTracks} />
+          <TopArtistsSection topArtists={topArtists} navigation={navigation} />
+        </View>
 
-        <UserPlaylistsSection userPlaylists={userPlaylists} />
+        <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
+          <Text
+            style={{
+              color: "white",
+              fontSize: 20,
+              fontFamily: "AvenirNext-Bold",
+              marginBottom: 5,
+            }}
+          >
+            Top Tracks
+          </Text>
+
+          <TopTracksSection topTracks={topTracks} />
+        </View>
+
+        <View style={{ padding: 10, alignItems: "flex-start", width: "100%" }}>
+          <Text
+            style={{
+              color: "white",
+              fontSize: 20,
+              fontFamily: "AvenirNext-Bold",
+              marginBottom: 5,
+            }}
+          >
+            Your Playlists
+          </Text>
+          <UserPlaylistsSection userPlaylists={userPlaylists} />
+        </View>
       </ScrollView>
     </LinearGradient>
   );

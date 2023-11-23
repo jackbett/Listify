@@ -1,20 +1,31 @@
 // AuthProvider.js
-import * as WebBrowser from 'expo-web-browser';
+import * as WebBrowser from "expo-web-browser";
 
 import React, { createContext, useState, useEffect } from "react";
-import * as SecureStore from 'expo-secure-store';
-import { encode } from 'base-64';
-import { useNavigation } from '@react-navigation/native';
+import * as SecureStore from "expo-secure-store";
+import { encode } from "base-64";
+import { useNavigation } from "@react-navigation/native";
 
 const AuthContext = createContext();
 
 const AUTHORIZATION_ENDPOINT = "https://accounts.spotify.com/authorize";
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const CLIENT_ID = "c7aa783dc6ec4440886b382a9fd31e79";
-const SECRET_ID = "9773862fc3794b5eab58e94953f81e9d";
+const SECRET_ID = "679a0eaa99f0498094b188721e077668";
 const CODE_RESPONSE_TYPE = "code";
-const REDIRECT_URI = "exp://jp-f6y.jackabett.listify.exp.direct:80/--/spotify-auth-callback";
-const SCOPE = ["user-read-email", "playlist-modify-public", "user-read-currently-playing"];
+const REDIRECT_URI =
+  "exp://jp-f6y.jackabett.listify.exp.direct:80/--/spotify-auth-callback";
+const SCOPE = [
+  "playlist-read-private",
+  "playlist-modify-public",
+  "playlist-modify-private",
+  "user-library-read",
+  "user-library-modify",
+  "user-top-read",
+  "playlist-read-collaborative",
+  "user-read-email",
+  "user-read-currently-playing",
+];
 const AUTH_CODE_GRANT_TYPE = "authorization_code";
 const CONTENT_TYPE_HEADER = "application/x-www-form-urlencoded";
 const REFRESH_GRANT_TYPE = "refresh_token";
@@ -46,12 +57,12 @@ function AuthProvider({ children }) {
   useEffect(() => {
     const loadAuthState = async () => {
       try {
-        const savedState = await SecureStore.getItemAsync('authState');
+        const savedState = await SecureStore.getItemAsync("authState");
         if (savedState) {
           setState(JSON.parse(savedState));
         }
       } catch (error) {
-        console.error('Error loading auth state:', error);
+        console.error("Error loading auth state:", error);
       }
     };
 
@@ -75,10 +86,10 @@ function AuthProvider({ children }) {
         refreshToken,
       };
 
-      await SecureStore.setItemAsync('authState', JSON.stringify(updatedState));
+      await SecureStore.setItemAsync("authState", JSON.stringify(updatedState));
       setState(updatedState);
     } catch (error) {
-      console.error('Error updating auth state:', error);
+      console.error("Error updating auth state:", error);
     }
   };
 
@@ -89,16 +100,17 @@ function AuthProvider({ children }) {
       const tokenResponse = await fetch(state.tokenEndpoint, {
         method: "POST",
         headers: {
-          'Cache-Control': 'no-cache',
-          'cache':'no-store',
-          'Pragma': 'no-cache',
-          'Expires': 0,
-          Authorization: "Basic " + encode(`${state.clientId}:${state.secretId}`),
+          "Cache-Control": "no-cache",
+          cache: "no-store",
+          Pragma: "no-cache",
+          Expires: 0,
+          Authorization:
+            "Basic " + encode(`${state.clientId}:${state.secretId}`),
           "Content-Type": state.contentTypeHeader,
         },
         body: `show-dialog=true&grant_type=${state.authCodeGrantType}&code=${authCode}&redirect_uri=${state.redirectUri}`,
       });
-  
+
       const tokenResponseJson = await tokenResponse.json();
       setAuthStates(
         authCode,
@@ -107,8 +119,8 @@ function AuthProvider({ children }) {
         tokenResponseJson.expires_in,
         tokenResponseJson.refresh_token
       );
-      navigation.navigate('Home', {
-        animation: 'slide_from_right', // Custom parameter for animation direction
+      navigation.navigate("Home", {
+        animation: "slide_from_right", // Custom parameter for animation direction
       });
       // Trigger the callback
       if (onLoginSuccess) {
@@ -126,9 +138,9 @@ function AuthProvider({ children }) {
           Authorization: `Bearer ${state.accessToken}`,
         },
       });
-      return response.ok; 
+      return response.ok;
     } catch (error) {
-      console.error('Error validating access token:', error);
+      console.error("Error validating access token:", error);
       return false;
     }
   };
@@ -141,9 +153,9 @@ function AuthProvider({ children }) {
       });
 
       const response = await fetch(TOKEN_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': CONTENT_TYPE_HEADER,
+          "Content-Type": CONTENT_TYPE_HEADER,
           Authorization: `Basic ${encode(`${CLIENT_ID}:${SECRET_ID}`)}`,
         },
         body: bodyParams.toString(),
@@ -152,7 +164,7 @@ function AuthProvider({ children }) {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error('Token refresh failed');
+        throw new Error("Token refresh failed");
       }
 
       const updatedState = {
@@ -163,33 +175,30 @@ function AuthProvider({ children }) {
         refreshToken: responseData.refresh_token || state.refreshToken,
       };
 
-      await SecureStore.setItemAsync('authState', JSON.stringify(updatedState));
+      await SecureStore.setItemAsync("authState", JSON.stringify(updatedState));
       setState(updatedState);
     } catch (error) {
-      console.error('Error refreshing access token:', error);
+      console.error("Error refreshing access token:", error);
       throw error;
     }
   };
 
   const signOut = async () => {
-     
     try {
-
       // Clear the authentication state and remove tokens from storage
-      await SecureStore.deleteItemAsync('authState');
-      
+      await SecureStore.deleteItemAsync("authState");
+
       // Set the authentication state back to the initial state
       setState(initialState);
-  
-      navigation.navigate('Login', {
-        animation: 'slide_from_left',
+
+      navigation.navigate("Login", {
+        animation: "slide_from_left",
       });
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
       throw error;
     }
   };
-  
 
   return (
     <AuthContext.Provider
