@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, ActivityIndicator, Dimensions, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useArtistTopTracks, useArtistInfo } from '../api/SpotifyApi'; // Import the custom hook for artist top tracks
+import { useArtistTopTracks, useArtistInfo, useArtistAlbums } from '../api/SpotifyApi'; // Import the custom hook for artist top tracks
 import { AuthContext } from "../api/AuthService";
 import { Ionicons } from '@expo/vector-icons';
 import GenreBubbles from '../components/GenreBubbles'; // Import the GenreBubbles component
@@ -17,14 +17,34 @@ const ArtistDetailsScreen = ({ route }) => {
   const topPadding = screenHeight * 0.08;
   const imageSize = screenHeight * 0.4;
 
+
+  const imageSizee = 300; // Adjust this size according to your requirement
+  const topPaddinge = 30; // Top padding for the header
+
+  const artists = { /* Provide artist details here */ };
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const handleScroll = (event) => {
+    const position = event.nativeEvent.contentOffset.y;
+    setScrollPosition(position);
+  };
+
+  const extractYearFromDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    return year;
+  };
+
   // Fetch top 10 tracks for the specific artist ID
   const { artistTopTracks, fetchArtistTopTracks } = useArtistTopTracks(accessToken, artist.id); 
-  // const { artistInfo, fetchArtistInfo } = useArtistInfo(accessToken, artist.id); 
+  const { artistInfo, fetchArtistInfo } = useArtistInfo(accessToken, artist.id); 
+  const { artistAlbums, fetchArtistAlbums } = useArtistAlbums(accessToken, artist.id);
 
   const fetchData = async () => {
     try {
       await fetchArtistTopTracks(artist.id);
-      // await fetchArtistInfo(artist.id); // Pass artist.id here
+      await fetchArtistInfo(artist.id); // Pass artist.id here
+      await fetchArtistAlbums(artist.id); // Pass artist.id here
       setDataLoaded(true);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -39,6 +59,7 @@ const ArtistDetailsScreen = ({ route }) => {
     if (!dataLoaded || !artistTopTracks) {
       return <ActivityIndicator size="small" color="#1DB954" />;
     }
+ 
 
     return (
       <FlatList
@@ -65,6 +86,38 @@ const ArtistDetailsScreen = ({ route }) => {
     );
   };
 
+  const renderAllAlbums = () => {
+    if (!dataLoaded || !artistAlbums) {
+      return <ActivityIndicator size="small" color="#1DB954" />;
+    }
+
+    return (
+      <FlatList
+        data={artistAlbums.items} // Assuming that the API response structure has an "items" array for albums
+        keyExtractor={(item, index) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => navigation.navigate('AlbumDetails', { album: item })}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}>
+              <Image
+                source={{ uri: item.images[0].url }}
+                style={{ width: 50, height: 50, borderRadius: 0, marginRight: 10 }}
+              />
+              <View>
+                <Text style={{ color: 'white', fontSize: 16 }}>{item.name}</Text>
+                <Text style={{ color: 'lightgray', fontSize: 14 }}>{extractYearFromDate(item.release_date)}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    );
+  };
+
+  // useEffect(() => {
+  //   fetchArtistAlbums();
+  // }, [accessToken, artist.id]);
+  
+
   return (
     <View style={{ flex: 1, backgroundColor: '#040306' }}>
       {/* Artist image with overlapping buttons and header */}
@@ -88,6 +141,13 @@ const ArtistDetailsScreen = ({ route }) => {
 
       </View>
 
+      <ScrollView
+        style={{ flex: 1 }}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+      >     
+
       {/* Rest of the content */}
       <View style={{ paddingTop: 10, paddingHorizontal: 10 }}>
         {/* Display top tracks */}
@@ -99,7 +159,12 @@ const ArtistDetailsScreen = ({ route }) => {
               Genres
             </Text>
             <GenreBubbles genres={artist.genres} />
+
+            {/* <Text style={{ color: 'white', fontSize: 20, marginTop: 20, marginBottom: 10, fontWeight: 'bold' }}>
+              {artist.followers.total}
+            </Text> */}
           </View>
+          
         )}
 
         <View style={{ marginTop: 20 }}>
@@ -109,7 +174,15 @@ const ArtistDetailsScreen = ({ route }) => {
           {/* Render top tracks */}
           {renderTopTracks()}
         </View>
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ color: 'white', fontSize: 20, marginBottom: 10, fontWeight: 'bold' }}>
+            Albums
+          </Text>
+          {/* Render all albums */}
+          {renderAllAlbums()}
+        </View>
       </View>
+      </ScrollView>
     </View>
   );
 };

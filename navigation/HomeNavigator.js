@@ -10,6 +10,7 @@ import SettingsScreen from "../screens/SettingsScreen";
 import SearchScreen from "../screens/SearchScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ArtistDetailsScreen from "../screens/ArtistDetailsScreen"; // Import ArtistDetailsScreen
+import TrackDetailScreen from "../screens/TrackDetailScreen"; // Import ArtistDetailsScreen
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -31,6 +32,10 @@ const ArtistDetailsStack = () => {
       <Stack.Screen
         name="ArtistDetails"
         component={ArtistDetailsScreen}
+      />
+       <Stack.Screen
+        name="TrackDetails"
+        component={TrackDetailScreen}
       />
     </Stack.Navigator>
   );

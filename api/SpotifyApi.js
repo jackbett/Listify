@@ -200,9 +200,7 @@ const useArtistInfo = (accessToken, artistId) => {
       }
     } catch (error) {
       console.error('Error fetching artist info:', error.message);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -214,5 +212,37 @@ const useArtistInfo = (accessToken, artistId) => {
   return { artistInfo, fetchArtistInfo };
 };
 
+const useArtistAlbums = (accessToken, artistId) => {
+  const [artistAlbums, setArtistAlbums] = useState(null);
 
-export { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks, useUserPlaylists, useArtistTopTracks, useArtistInfo };
+  const fetchArtistAlbums = async () => {
+    try {
+      const response = await fetch(`https://api.spotify.com/v1/artists/${artistId}/albums`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setArtistAlbums(data);
+        // console.info(data)
+      } else {
+        console.error('Error fetching artist albums:', response.status, JSON.stringify(response));
+      }
+    } catch (error) {
+      console.error('Error fetching artist albums:', error.message);
+    } 
+  };
+
+  useEffect(() => {
+    if (accessToken && artistId) {
+      fetchArtistAlbums();
+    }
+  }, [accessToken, artistId]);
+
+  return { artistAlbums, fetchArtistAlbums };
+};
+
+
+export { useUserProfile, useCurrentlyPlaying, useTopArtists, useTopTracks, useUserPlaylists, useArtistTopTracks, useArtistInfo, useArtistAlbums };
